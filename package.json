@@ -15,5 +15,15 @@
   },
   "author": "",
   "license": "MIT",
-  "readmeFilename": "Readme.md"
+  "readmeFilename": "Readme.md",
+  "testling": {
+    "files": "test/*.js",
+    "browsers": {
+      "ie": [ 8, 9 ],
+      "firefox": [ 15 ],
+      "chrome": [ 22 ],
+      "safari": [ 5.1 ]
+    },
+    "harness": "mocha-qunit"
+  }
 }
