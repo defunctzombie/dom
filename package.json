@@ -20,6 +20,7 @@
   "license": "MIT",
   "readmeFilename": "Readme.md",
   "testling": {
+    "scripts": "compat.js",
     "files": "test/*.js",
     "browsers": {
       "ie": [ 8, 9 ],
