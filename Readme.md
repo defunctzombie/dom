@@ -6,7 +6,7 @@ DOM traversal / manipulation library
 
 ## API
 
-See the [wiki](/wiki) for detailed api documentation and examples.
+See the [wiki](/shtylman/dom/wiki) for detailed api documentation and examples.
 
 ## License
 
