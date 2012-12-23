@@ -293,7 +293,7 @@ List.prototype.show = function() {
  * @api public
  */
 
-List.prototype.on = function(name, selector, fn, capture){
+List.prototype.on = function(name, selector, fn, capture) {
   if ('string' == typeof selector) {
 
     var el = this.els[0];

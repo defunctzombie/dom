@@ -31,7 +31,9 @@ test('.off(name)', function(done) {
 });
 
 test('.on(name, selector)', function(done) {
-    var div = dom('<ul hidden><li><a>foo</a></li><li>bar</li></ul>');
+    var div = dom('<ul style="display:none"><li><a>foo</a></li><li>bar</li></ul>');
+
+    // chrome needs this to bubble the event
     dom(document.body).append(div);
 
     div.on('click', 'li', function(ev) {
@@ -43,7 +45,7 @@ test('.on(name, selector)', function(done) {
     });
 
     div.find('li a').first().emit('click', {
-        canBubble: true,
+        bubbles: true
     });
 });
 

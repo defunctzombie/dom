@@ -1,19 +1,19 @@
 {
   "initEvent" : [
     "type",
-    "canBubble",
+    "bubbles",
     "cancelable"
   ],
   "initUIEvent" : [
     "type",
-    "canBubble",
+    "bubbles",
     "cancelable",
     "view",
     "detail"
   ],
   "initMouseEvent" : [
     "type",
-    "canBubble",
+    "bubbles",
     "cancelable",
     "view",
     "detail",
@@ -30,12 +30,24 @@
   ],
   "initMutationEvent" : [
     "type",
-    "canBubble",
+    "bubbles",
     "cancelable",
     "relatedNode",
     "prevValue",
     "newValue",
     "attrName",
     "attrChange"
+  ],
+  "initKeyEvent" : [
+    "type",
+    "bubbles",
+    "cancelable",
+    "view",
+    "ctrlKey",
+    "altKey",
+    "shiftKey",
+    "metaKey",
+    "keyCode",
+    "charCode"
   ]
 }
