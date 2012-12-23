@@ -5,36 +5,10 @@ var matches = require('./lib/matches');
 var event = require('./lib/event');
 
 /**
- * Attributes supported.
- */
-
-var attrs = [
-  'id',
-  'src',
-  'rel',
-  'cols',
-  'rows',
-  'name',
-  'href',
-  'title',
-  'style',
-  'width',
-  'height',
-  'tabindex',
-  'placeholder'
-];
-
-/**
  * Expose `dom()`.
  */
 
 exports = module.exports = dom;
-
-/**
- * Expose supported attrs.
- */
-
-exports.attrs = attrs;
 
 /**
  * Return a dom `List` for the given
@@ -668,15 +642,4 @@ List.prototype.prev = function() {
 List.prototype.emit = function(name, opt) {
   event.emit(this.els[0], name, opt);
 };
-
-/**
- * Attribute accessors.
- */
-
-attrs.forEach(function(name){
-  List.prototype[name] = function(val){
-    if (0 == arguments.length) return this.attr(name);
-    return this.attr(name, val);
-  };
-});
 

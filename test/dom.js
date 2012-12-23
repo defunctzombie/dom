@@ -134,16 +134,3 @@ test('.attr(key)', function() {
     assert('logo' == list.attr('id'));
 });
 
-dom.attrs.forEach(function(name){
-    test('.' + name + '()', function() {
-        var list = dom('<a></a>');
-        list.attr(name, 'tobi');
-        assert('tobi' == list[name]());
-    });
-
-    test('.' + name + '(value)', function() {
-        var list = dom('<a></a>');
-        list[name]('tobi');
-        assert('tobi' == list[name]());
-    });
-});
