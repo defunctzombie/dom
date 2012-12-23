@@ -13,6 +13,9 @@
   "scripts": {
     "test": "make test"
   },
+  "devDependencies": {
+    "mocha": "~1.7.0"
+  },
   "author": "",
   "license": "MIT",
   "readmeFilename": "Readme.md",
