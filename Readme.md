@@ -4,12 +4,6 @@ DOM traversal / manipulation library
 
 [![browser support](http://ci.testling.com/shtylman/dom.png)](http://ci.testling.com/shtylman/dom)
 
-## Installation
-
-```
-$ npm install dom
-```
-
 ## Example
 
 ```js
