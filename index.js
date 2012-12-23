@@ -1,14 +1,8 @@
 
-/**
- * Module dependencies.
- */
-
-var domify = require('domify')
-  , classes = require('classes')
-  , indexof = require('indexof')
-  , delegate = require('delegate')
-  , events = require('event')
-  , type = require('type')
+var domify = require('./lib/domify');
+var classes = require('./lib/classes');
+var matches = require('./lib/matches');
+var event = require('./lib/event');
 
 /**
  * Attributes supported.
@@ -46,7 +40,7 @@ exports.attrs = attrs;
  * Return a dom `List` for the given
  * `html`, selector, or element.
  *
- * @param {String|Element|List} 
+ * @param {String|Element|List}
  * @return {List}
  * @api public
  */
@@ -119,6 +113,11 @@ List.prototype.attr = function(name, val){
   } else {
     return this.els[0].getAttribute(name);
   }
+};
+
+List.prototype.removeAttr = function(name) {
+  this.els[0].removeAttribute(name);
+  return this;
 };
 
 /**
@@ -258,9 +257,54 @@ List.prototype.text = function(){
  * @api public
  */
 
-List.prototype.html = function(){
-  // TODO: real impl
-  return this.els[0] && this.els[0].innerHTML;
+List.prototype.html = function(val){
+  var el = this.els[0];
+  if (!el) {
+    return this;
+  }
+
+  if (val) {
+    var str = val;
+    if (val instanceof List) {
+      str = '';
+      val.forEach(function(item) {
+        str += item.html();
+      });
+    }
+    else if (val instanceof Array) {
+      str = '';
+      val.forEach(function(item) {
+        str += item.els[0].outerHTML;
+      });
+    }
+    el.innerHTML = str;
+    return this;
+  }
+
+  return el.innerHTML;
+};
+
+List.prototype.hide = function() {
+  this.els.forEach(function(item) {
+    var save = item.style.display;
+    if (save) {
+      item.setAttribute('data-olddisplay', save);
+    }
+    item.style.display = 'none';
+  });
+  return this;
+};
+
+List.prototype.show = function() {
+  this.els.forEach(function(item) {
+    var old = item.getAttribute('data-olddisplay');
+    item.removeAttribute('data-olddisplay');
+    if (!old || old === 'none') {
+      old = 'block';
+    }
+    item.style.display = old;
+  });
+  return this;
 };
 
 /**
@@ -275,19 +319,50 @@ List.prototype.html = function(){
  * @api public
  */
 
-List.prototype.on = function(event, selector, fn, capture){
+List.prototype.on = function(name, selector, fn, capture){
   if ('string' == typeof selector) {
+
+    var el = this.els[0];
+    var deleg = function(e) {
+      var target = e.target;
+      do {
+        if (matches(target, selector)) {
+
+          // craete a new 'event' object
+          // so we can replace the 'currentTarget' field
+          var new_ev = Object.create(e.constructor.prototype);
+          for (var k in e) {
+            new_ev[k] = e[k];
+          }
+
+          // replace the current target
+          new_ev.currentTarget = target;
+
+          return fn.call(target, new_ev);
+        }
+        target = target.parentElement;
+      } while (target && target !== el);
+    }
+
+    // TODO(shtylman) synthesize this event
+    if (name === 'mouseenter') {
+      name = 'mouseover';
+    }
+
     for (var i = 0; i < this.els.length; ++i) {
-      fn._delegate = delegate.bind(this.els[i], selector, event, fn, capture);
+      fn._delegate = deleg;
+      event.bind(this.els[i], name, deleg, capture);
     }
     return this;
   }
+
+  //TODO(shtylman) why not just override the fn and bind that?
 
   capture = fn;
   fn = selector;
 
   for (var i = 0; i < this.els.length; ++i) {
-    events.bind(this.els[i], event, fn, capture);
+    event.bind(this.els[i], name, fn, capture);
   }
 
   return this;
@@ -306,11 +381,11 @@ List.prototype.on = function(event, selector, fn, capture){
  * @api public
  */
 
-List.prototype.off = function(event, selector, fn, capture){
+List.prototype.off = function(name, selector, fn, capture){
   if ('string' == typeof selector) {
     for (var i = 0; i < this.els.length; ++i) {
       // TODO: add selector support back
-      delegate.unbind(this.els[i], event, fn._delegate, capture);
+      delegate.unbind(this.els[i], name, fn._delegate, capture);
     }
     return this;
   }
@@ -319,7 +394,7 @@ List.prototype.off = function(event, selector, fn, capture){
   fn = selector;
 
   for (var i = 0; i < this.els.length; ++i) {
-    events.unbind(this.els[i], event, fn, capture);
+    event.unbind(this.els[i], name, fn, capture);
   }
   return this;
 };
@@ -370,6 +445,15 @@ List.prototype.map = function(fn){
   return arr;
 };
 
+List.prototype.select = function() {
+  for (var i=0; i<this.els.length ; ++i) {
+    var el = this.els[i];
+    el.select();
+  };
+
+  return this;
+};
+
 /**
  * Filter elements invoking `fn(list, i)`, returning
  * a new `List` of elements when a truthy value is returned.
@@ -379,7 +463,6 @@ List.prototype.map = function(fn){
  * @api public
  */
 
-List.prototype.select =
 List.prototype.filter = function(fn){
   var el;
   var list = new List([], this.selector);
@@ -388,6 +471,34 @@ List.prototype.filter = function(fn){
     if (fn(new List([el], this.selector), i)) list.els.push(el);
   }
   return list;
+};
+
+List.prototype.value = function(val) {
+  var el = this.els[0];
+  if (val) {
+    el.value = val;
+    return this
+  }
+
+  return el.value;
+};
+
+List.prototype.offset = function() {
+  var el = this.els[0];
+  var curleft = 0;
+  var curtop = 0;
+
+  if (el.offsetParent) {
+    do {
+      curleft += el.offsetLeft;
+      curtop += el.offsetTop;
+    } while (el = el.offsetParent);
+  }
+
+  return {
+    left: curleft,
+    top: curtop
+  }
 };
 
 /**
@@ -472,6 +583,10 @@ List.prototype.hasClass = function(name){
  */
 
 List.prototype.css = function(prop, val){
+  if (prop instanceof Object) {
+    return this.setStyle(prop)
+  }
+
   if (2 == arguments.length) return this.setStyle(prop, val);
   return this.getStyle(prop);
 };
@@ -487,7 +602,14 @@ List.prototype.css = function(prop, val){
 
 List.prototype.setStyle = function(prop, val){
   for (var i = 0; i < this.els.length; ++i) {
-    this.els[i].style[prop] = val;
+    if (prop instanceof Object) {
+      for(var p in prop) {
+        this.els[i].style[p] = prop[p]
+      }
+    }
+    else {
+      this.els[i].style[prop] = val;
+    }
   }
   return this;
 };
@@ -525,6 +647,26 @@ List.prototype.find = function(selector){
     }
   }
   return list;
+};
+
+List.prototype.next = function() {
+  var els = this.els.map(function(el) {
+    return el.nextElementSibling;
+  });
+
+  return new List(els);
+};
+
+List.prototype.prev = function() {
+  var els = this.els.map(function(el) {
+    return el.previousElementSibling;
+  });
+
+  return new List(els);
+};
+
+List.prototype.emit = function(name, opt) {
+  event.emit(this.els[0], name, opt);
 };
 
 /**

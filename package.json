@@ -1,0 +1,19 @@
+{
+  "name": "dom",
+  "version": "0.0.0",
+  "description": "dom traversal / manipulation library",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/component/dom.git"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "author": "",
+  "license": "MIT",
+  "readmeFilename": "Readme.md"
+}

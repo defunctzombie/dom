@@ -1,20 +1,11 @@
-
 # dom
 
-  jQuery inspired DOM traversal / manipulation component. Aggregates the
-  following components to create a more familiar experience when you need
-  the combined functionality of:
-
-  - [domify](http://github.com/component/domify) to convert HTML to DOM nodes
-  - [classes](http://github.com/component/classes) to add, remove, and toggle classes
-  - [delegate](http://github.com/component/delegate) for event delegation
-  - [event](http://github.com/component/event) for event binding
-  - [type](http://github.com/component/type) for type checking
+DOM traversal / manipulation library
 
 ## Installation
 
 ```
-$ component install component/dom
+$ npm install dom
 ```
 
 ## Example
@@ -22,14 +13,10 @@ $ component install component/dom
 ```js
 var dom = require('dom');
 
-dom('li').select(function(el){
+dom('li').filter(function(el) {
   return el.text() == 'Maru';
 }).addClass('amazing');
 ```
-
-## API
-
-  ... not even remotely done, feel free to fork and help ...
 
 ## API
 
@@ -40,18 +27,28 @@ dom('li').select(function(el){
    - [.at(i)](#ati)
    - [.first()](#first)
    - [.last()](#last)
+   - [.find(selector)](#findselector)
+
+### css
    - [.addClass(name)](#addclassname)
    - [.removeClass(name)](#removeclassname)
    - [.toggleClass(name)](#toggleclassname)
    - [.hasClass(name)](#hasclassname)
-   - [.find(selector)](#findselector)
+   - [.css(prop, value)](#cssprop-value)
+   - [.css(prop)](#cssprop)
+   - .hide()
+   - .show()
+
+### manipulation
+   - .append(element)
+   - .prepend(element)
+   - .html(source)
+
+### iteration
    - [.each(fn)](#eachfn)
    - [.forEach(fn)](#foreachfn)
    - [.map(fn)](#mapfn)
-   - [.select(fn)](#selectfn)
    - [.filter(fn)](#filterfn)
-   - [.css(prop, value)](#cssprop-value)
-   - [.css(prop)](#cssprop)
 
 <a name="domid"></a>
 ### dom(id)
