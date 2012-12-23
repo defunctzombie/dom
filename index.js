@@ -302,12 +302,15 @@ List.prototype.on = function(name, selector, fn, capture){
       do {
         if (matches(target, selector)) {
 
+          var Event = function(e) {
+            for (var k in e) {
+              this[k] = e[k];
+            }
+          };
+
           // craete a new 'event' object
           // so we can replace the 'currentTarget' field
-          var new_ev = Object.create(e.constructor.prototype);
-          for (var k in e) {
-            new_ev[k] = e[k];
-          }
+          var new_ev = new Event(e);
 
           // replace the current target
           new_ev.currentTarget = target;
