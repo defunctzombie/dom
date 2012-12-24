@@ -8,7 +8,7 @@ components:
 clean:
 	rm -fr build components
 
-test: build/build.js
+test:
 	@zuul test/*.js --ui qunit
 
 .PHONY: clean test
