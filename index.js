@@ -522,11 +522,35 @@ proto.contentHeight = function() {
   var pbot = style.getPropertyValue('padding-bottom').replace('px', '') - 0;
 
   return this.innerHeight() - ptop - pbot;
-
 };
 
 proto.scrollHeight = function() {
   return this.els[0].scrollHeight;
+};
+
+/// includes border
+proto.outerWidth = function() {
+  return this.els[0].offsetWidth;
+};
+
+/// no border, includes padding
+proto.innerWidth = function() {
+  return this.els[0].clientWidth;
+};
+
+/// no border, no padding
+/// this is slower than the others because it must get computed style values
+proto.contentWidth = function() {
+  var style = window.getComputedStyle(this.els[0], null);
+  var pleft = style.getPropertyValue('padding-left').replace('px', '') - 0;
+  var pright = style.getPropertyValue('padding-right').replace('px', '') - 0;
+
+  return this.innerWidth() - pleft - pright;
+
+};
+
+proto.scrollWidth = function() {
+  return this.els[0].scrollWidth;
 };
 
 /**
