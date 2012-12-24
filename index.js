@@ -20,6 +20,12 @@ exports = module.exports = dom;
  */
 
 function dom(selector, context) {
+
+  // user must specify a selector
+  if (!selector) {
+    throw new Error('no selector specified');
+  }
+
   var ctx = context
     ? (context.els ? context.els[0] : context)
     : document.firstChild;
