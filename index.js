@@ -45,6 +45,10 @@ function dom(selector, context) {
     return new List([selector]);
   }
 
+  if (typeof selector === 'string') {
+    selector = selector.trim();
+  }
+
   // html
   if ('<' == selector.charAt(0)) {
     return new List([domify(selector)], selector);
