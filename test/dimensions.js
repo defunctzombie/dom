@@ -3,27 +3,30 @@ var dom = require('../');
 
 suite('dimensions - height');
 
-var h1 = dom('<div style="height:1px; border:1px solid; padding:1px; margin:1px"></div>');
+var h1 = dom('<div style="height:1px; border:1px solid; padding:1px; margin:1px">');
 var h2 = dom('<div>');
 
 // box sized div
-var h3 = dom('<div style="height:10px; border:1px solid; padding:1px; -mox-box-sizing:border-box; --webkit-box-sizing:border-box; box-sizing:border-box"></div>');
+var h3 = dom('<div style="height:10px; border:1px solid; padding:1px; -moz-box-sizing:border-box; -webkit-box-sizing:border-box; box-sizing:border-box">');
 
-var h4 = dom('<div style="height:5px">');
+var h4 = dom('<div style="height:5px; overflow:hidden">');
 
 test('setup', function() {
+
+    var outer = dom(document.body);
+
     // need to append to document to get height
-    dom(document.body).append(h1);
+    outer.append(h1);
 
     // two elements in a div
     dom(document.body).append(h2);
     h2.append(h1.clone()).append(h1.clone());
 
-    dom(document.body).append(h3);
+    outer.append(h3);
 
     var d = dom('<div style="height:20px">');
     h4.append(d.clone()).append(d.clone());
-    dom(document.body).append(h4);
+    outer.append(h4);
 });
 
 test('.outerHeight()', function() {
@@ -61,9 +64,9 @@ var w1 = dom('<div style="display:inline-block; width:1px; border:1px solid; pad
 var w2 = dom('<div style="display:inline-block">');
 
 // box sized div
-var w3 = dom('<div style="display:inline-block;width:10px; border:1px solid; padding:1px; -mox-box-sizing:border-box; --webkit-box-sizing:border-box; box-sizing:border-box">');
+var w3 = dom('<div style="display:inline-block;width:10px; border:1px solid; padding:1px; -moz-box-sizing:border-box; -webkit-box-sizing:border-box; box-sizing:border-box">');
 
-var w4 = dom('<div style="display:inline-block;width:5px">');
+var w4 = dom('<div style="display:inline-block;width:5px;overflow:hidden">');
 
 test('setup', function() {
     // need to append to document to get height
