@@ -493,6 +493,18 @@ List.prototype.offset = function() {
   }
 };
 
+List.prototype.position = function() {
+  var el = this.els[0];
+  return {
+    top: el.offsetTop,
+    left: el.offsetLeft
+  }
+};
+
+List.prototype.height = function() {
+  return this.els[0].clientHeight;
+};
+
 /**
  * Add the given class `name`.
  *
