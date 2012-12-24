@@ -225,7 +225,12 @@ List.prototype.length = function(){
  * @api public
  */
 
-List.prototype.text = function(){
+List.prototype.text = function(val) {
+  if (val) {
+    this.els[0].textContent = val;
+    return this;
+  }
+
   // TODO: real impl
   var str = '';
   for (var i = 0; i < this.els.length; ++i) {
