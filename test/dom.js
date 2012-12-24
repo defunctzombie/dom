@@ -7,8 +7,17 @@ suite('dom()');
 test('selector', function() {
     var list = dom('<ul><li id="one">foo</li><li id="two">bar</li></ul>');
     list = dom('#two', list);
-    assert(1 == list.length(), 'expected length of 1');
+    assert(1 == list.length());
     assert('bar' == list.get(0).textContent);
+});
+
+test('trim selector', function() {
+    var list = dom('  <ul><li id="one"> foo </li></ul>  ');
+    assert(1 == list.length());
+
+    var li = list.find('  #one ');
+    assert(1 == li.length());
+    assert(' foo ' == li.text());
 });
 
 test('html', function() {
