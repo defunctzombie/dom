@@ -702,17 +702,29 @@ proto.find = function(selector){
 };
 
 proto.next = function() {
-  var els = this.els.map(function(el) {
-    return el.nextElementSibling;
-  });
+
+  var els = [];
+  for (var i=0 ; i<this.els.length ; ++i) {
+    var next = this.els[i].nextElementSibling;
+    // if no more siblings then don't push
+    if (next) {
+      els.push(next);
+    }
+  }
 
   return new List(els);
 };
 
 proto.prev = function() {
-  var els = this.els.map(function(el) {
-    return el.previousElementSibling;
-  });
+
+  var els = [];
+  for (var i=0 ; i<this.els.length ; ++i) {
+    var next = this.els[i].previousElementSibling;
+    // if no more siblings then don't push
+    if (next) {
+      els.push(next);
+    }
+  }
 
   return new List(els);
 };
