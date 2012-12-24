@@ -81,6 +81,9 @@ function List(els, selector) {
   this.selector = selector;
 }
 
+// for minifying
+var proto = List.prototype;
+
 /**
  * Set attribute `name` to `val`, or get attr `name`.
  *
@@ -90,7 +93,7 @@ function List(els, selector) {
  * @api public
  */
 
-List.prototype.attr = function(name, val){
+proto.attr = function(name, val){
   if (2 == arguments.length) {
     this.els[0].setAttribute(name, val);
     return this;
@@ -99,7 +102,7 @@ List.prototype.attr = function(name, val){
   }
 };
 
-List.prototype.removeAttr = function(name) {
+proto.removeAttr = function(name) {
   this.els[0].removeAttribute(name);
   return this;
 };
@@ -111,7 +114,7 @@ List.prototype.removeAttr = function(name) {
  * @api public
  */
 
-List.prototype.clone = function(){
+proto.clone = function(){
   var arr = [];
   for (var i = 0, len = this.els.length; i < len; ++i) {
     arr.push(this.els[i].cloneNode(true));
@@ -127,7 +130,7 @@ List.prototype.clone = function(){
  * @api public
  */
 
-List.prototype.prepend = function(val){
+proto.prepend = function(val){
   var el = this.els[0];
   if (!el) return this;
   val = dom(val);
@@ -149,7 +152,7 @@ List.prototype.prepend = function(val){
  * @api public
  */
 
-List.prototype.append = function(val){
+proto.append = function(val){
   var el = this.els[0];
   if (!el) return this;
   val = dom(val);
@@ -167,7 +170,7 @@ List.prototype.append = function(val){
  * @api public
  */
 
-List.prototype.at = function(i){
+proto.at = function(i){
   return new List([this.els[i]], this.selector);
 };
 
@@ -179,7 +182,7 @@ List.prototype.at = function(i){
  * @api public
  */
 
-List.prototype.first = function(){
+proto.first = function(){
   return new List([this.els[0]], this.selector);
 };
 
@@ -191,7 +194,7 @@ List.prototype.first = function(){
  * @api public
  */
 
-List.prototype.last = function(){
+proto.last = function(){
   return new List([this.els[this.els.length - 1]], this.selector);
 };
 
@@ -203,7 +206,7 @@ List.prototype.last = function(){
  * @api public
  */
 
-List.prototype.get = function(i){
+proto.get = function(i){
   return this.els[i];
 };
 
@@ -214,7 +217,7 @@ List.prototype.get = function(i){
  * @api public
  */
 
-List.prototype.length = function(){
+proto.length = function(){
   return this.els.length;
 };
 
@@ -225,7 +228,7 @@ List.prototype.length = function(){
  * @api public
  */
 
-List.prototype.text = function(val) {
+proto.text = function(val) {
   if (val) {
     this.els[0].textContent = val;
     return this;
@@ -246,7 +249,7 @@ List.prototype.text = function(val) {
  * @api public
  */
 
-List.prototype.html = function(val){
+proto.html = function(val){
   var el = this.els[0];
   if (!el) {
     return this;
@@ -273,7 +276,7 @@ List.prototype.html = function(val){
   return el.innerHTML;
 };
 
-List.prototype.hide = function() {
+proto.hide = function() {
   this.els.forEach(function(item) {
     var save = item.style.display;
     if (save) {
@@ -284,7 +287,7 @@ List.prototype.hide = function() {
   return this;
 };
 
-List.prototype.show = function() {
+proto.show = function() {
   this.els.forEach(function(item) {
     var old = item.getAttribute('data-olddisplay');
     item.removeAttribute('data-olddisplay');
@@ -308,7 +311,7 @@ List.prototype.show = function() {
  * @api public
  */
 
-List.prototype.on = function(name, selector, fn, capture) {
+proto.on = function(name, selector, fn, capture) {
   if ('string' == typeof selector) {
 
     var el = this.els[0];
@@ -373,7 +376,7 @@ List.prototype.on = function(name, selector, fn, capture) {
  * @api public
  */
 
-List.prototype.off = function(name, selector, fn, capture){
+proto.off = function(name, selector, fn, capture){
   if ('string' == typeof selector) {
     for (var i = 0; i < this.els.length; ++i) {
       // TODO: add selector support back
@@ -399,7 +402,7 @@ List.prototype.off = function(name, selector, fn, capture){
  * @api public
  */
 
-List.prototype.each = function(fn){
+proto.each = function(fn){
   for (var i = 0; i < this.els.length; ++i) {
     fn(new List([this.els[i]], this.selector), i);
   }
@@ -414,7 +417,7 @@ List.prototype.each = function(fn){
  * @api public
  */
 
-List.prototype.forEach = function(fn){
+proto.forEach = function(fn){
   for (var i = 0; i < this.els.length; ++i) {
     fn(this.els[i], i);
   }
@@ -429,7 +432,7 @@ List.prototype.forEach = function(fn){
  * @api public
  */
 
-List.prototype.map = function(fn){
+proto.map = function(fn){
   var arr = [];
   for (var i = 0; i < this.els.length; ++i) {
     arr.push(fn(new List([this.els[i]], this.selector), i));
@@ -437,7 +440,7 @@ List.prototype.map = function(fn){
   return arr;
 };
 
-List.prototype.select = function() {
+proto.select = function() {
   for (var i=0; i<this.els.length ; ++i) {
     var el = this.els[i];
     el.select();
@@ -455,7 +458,7 @@ List.prototype.select = function() {
  * @api public
  */
 
-List.prototype.filter = function(fn){
+proto.filter = function(fn){
   var el;
   var list = new List([], this.selector);
   for (var i = 0; i < this.els.length; ++i) {
@@ -465,7 +468,7 @@ List.prototype.filter = function(fn){
   return list;
 };
 
-List.prototype.value = function(val) {
+proto.value = function(val) {
   var el = this.els[0];
   if (val) {
     el.value = val;
@@ -475,7 +478,7 @@ List.prototype.value = function(val) {
   return el.value;
 };
 
-List.prototype.offset = function() {
+proto.offset = function() {
   var el = this.els[0];
   var curleft = 0;
   var curtop = 0;
@@ -493,7 +496,7 @@ List.prototype.offset = function() {
   }
 };
 
-List.prototype.position = function() {
+proto.position = function() {
   var el = this.els[0];
   return {
     top: el.offsetTop,
@@ -501,8 +504,29 @@ List.prototype.position = function() {
   }
 };
 
-List.prototype.height = function() {
+/// includes border
+proto.outerHeight = function() {
+  return this.els[0].offsetHeight;
+};
+
+/// no border, includes padding
+proto.innerHeight = function() {
   return this.els[0].clientHeight;
+};
+
+/// no border, no padding
+/// this is slower than the others because it must get computed style values
+proto.contentHeight = function() {
+  var style = window.getComputedStyle(this.els[0], null);
+  var ptop = style.getPropertyValue('padding-top').replace('px', '') - 0;
+  var pbot = style.getPropertyValue('padding-bottom').replace('px', '') - 0;
+
+  return this.innerHeight() - ptop - pbot;
+
+};
+
+proto.scrollHeight = function() {
+  return this.els[0].scrollHeight;
 };
 
 /**
@@ -513,7 +537,7 @@ List.prototype.height = function() {
  * @api public
  */
 
-List.prototype.addClass = function(name){
+proto.addClass = function(name){
   var el;
   for (var i = 0; i < this.els.length; ++i) {
     el = this.els[i];
@@ -531,7 +555,7 @@ List.prototype.addClass = function(name){
  * @api public
  */
 
-List.prototype.removeClass = function(name){
+proto.removeClass = function(name){
   var el;
   for (var i = 0; i < this.els.length; ++i) {
     el = this.els[i];
@@ -549,7 +573,7 @@ List.prototype.removeClass = function(name){
  * @api public
  */
 
-List.prototype.toggleClass = function(name){
+proto.toggleClass = function(name){
   var el;
   for (var i = 0; i < this.els.length; ++i) {
     el = this.els[i];
@@ -567,7 +591,7 @@ List.prototype.toggleClass = function(name){
  * @api public
  */
 
-List.prototype.hasClass = function(name){
+proto.hasClass = function(name){
   var el;
   for (var i = 0; i < this.els.length; ++i) {
     el = this.els[i];
@@ -586,7 +610,7 @@ List.prototype.hasClass = function(name){
  * @api public
  */
 
-List.prototype.css = function(prop, val){
+proto.css = function(prop, val){
   if (prop instanceof Object) {
     return this.setStyle(prop)
   }
@@ -604,7 +628,7 @@ List.prototype.css = function(prop, val){
  * @api private
  */
 
-List.prototype.setStyle = function(prop, val){
+proto.setStyle = function(prop, val){
   for (var i = 0; i < this.els.length; ++i) {
     if (prop instanceof Object) {
       for(var p in prop) {
@@ -626,7 +650,7 @@ List.prototype.setStyle = function(prop, val){
  * @api private
  */
 
-List.prototype.getStyle = function(prop){
+proto.getStyle = function(prop){
   var el = this.els[0];
   if (el) return el.style[prop];
 };
@@ -639,7 +663,7 @@ List.prototype.getStyle = function(prop){
  * @api public
  */
 
-List.prototype.find = function(selector){
+proto.find = function(selector){
   // TODO: real implementation
   var list = new List([], this.selector);
   var el, els;
@@ -653,7 +677,7 @@ List.prototype.find = function(selector){
   return list;
 };
 
-List.prototype.next = function() {
+proto.next = function() {
   var els = this.els.map(function(el) {
     return el.nextElementSibling;
   });
@@ -661,7 +685,7 @@ List.prototype.next = function() {
   return new List(els);
 };
 
-List.prototype.prev = function() {
+proto.prev = function() {
   var els = this.els.map(function(el) {
     return el.previousElementSibling;
   });
@@ -669,7 +693,7 @@ List.prototype.prev = function() {
   return new List(els);
 };
 
-List.prototype.emit = function(name, opt) {
+proto.emit = function(name, opt) {
   event.emit(this.els[0], name, opt);
 };
 
