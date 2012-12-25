@@ -26,13 +26,29 @@ function dom(selector, context) {
     throw new Error('no selector specified');
   }
 
-  var ctx = context
-    ? (context.els ? context.els[0] : context)
-    : document.firstChild;
-
   // array
   if (Array.isArray(selector)) {
     return new List(selector);
+  }
+
+  var ctx = context;
+
+  // if no context, then use first child
+  if (!ctx) {
+    ctx = document.firstChild;
+  }
+  // if context is another list, use the first element
+  else if (ctx instanceof List) {
+    ctx = context[0];
+  }
+
+  // flatten out a nodelist into regular array
+  if (selector instanceof NodeList) {
+    var arr = [];
+    for (var i=0; i<selector.length ; ++i) {
+      arr.push(selector[i]);
+    }
+    return new List(arr, selector);
   }
 
   // List
@@ -45,18 +61,19 @@ function dom(selector, context) {
     return new List([selector]);
   }
 
+  // if selector is a string, trim off leading and trailing whitespace
   if (typeof selector === 'string') {
     selector = selector.trim();
   }
 
   // html
   if ('<' == selector.charAt(0)) {
-    return new List([domify(selector)], selector);
+    return dom(domify(selector));
   }
 
   // selector
   if ('string' == typeof selector) {
-    return new List(ctx.querySelectorAll(selector), selector);
+    return dom(ctx.querySelectorAll(selector), selector);
   }
 }
 
@@ -77,7 +94,7 @@ exports.List = List;
  */
 
 function List(els, selector) {
-  this.els = els || [];
+  Array.prototype.push.apply(this, els);
   this.selector = selector;
 }
 
@@ -93,17 +110,17 @@ var proto = List.prototype;
  * @api public
  */
 
-proto.attr = function(name, val){
+proto.attr = function(name, val) {
   if (2 == arguments.length) {
-    this.els[0].setAttribute(name, val);
+    this[0].setAttribute(name, val);
     return this;
   } else {
-    return this.els[0].getAttribute(name);
+    return this[0].getAttribute(name);
   }
 };
 
 proto.removeAttr = function(name) {
-  this.els[0].removeAttribute(name);
+  this[0].removeAttribute(name);
   return this;
 };
 
@@ -116,8 +133,8 @@ proto.removeAttr = function(name) {
 
 proto.clone = function(){
   var arr = [];
-  for (var i = 0, len = this.els.length; i < len; ++i) {
-    arr.push(this.els[i].cloneNode(true));
+  for (var i = 0, len = this.length; i < len; ++i) {
+    arr.push(this[i].cloneNode(true));
   }
   return new List(arr);
 };
@@ -131,14 +148,14 @@ proto.clone = function(){
  */
 
 proto.prepend = function(val){
-  var el = this.els[0];
+  var el = this[0];
   if (!el) return this;
   val = dom(val);
-  for (var i = 0; i < val.els.length; ++i) {
+  for (var i = 0; i < val.length; ++i) {
     if (el.children.length) {
-      el.insertBefore(val.els[i], el.firstChild);
+      el.insertBefore(val[i], el.firstChild);
     } else {
-      el.appendChild(val.els[i]);
+      el.appendChild(val[i]);
     }
   }
   return this;
@@ -153,11 +170,11 @@ proto.prepend = function(val){
  */
 
 proto.append = function(val){
-  var el = this.els[0];
+  var el = this[0];
   if (!el) return this;
   val = dom(val);
-  for (var i = 0; i < val.els.length; ++i) {
-    el.appendChild(val.els[i]);
+  for (var i = 0; i < val.length; ++i) {
+    el.appendChild(val[i]);
   }
   return this;
 };
@@ -171,7 +188,7 @@ proto.append = function(val){
  */
 
 proto.at = function(i){
-  return new List([this.els[i]], this.selector);
+  return new List([this[i]], this.selector);
 };
 
 /**
@@ -183,7 +200,7 @@ proto.at = function(i){
  */
 
 proto.first = function(){
-  return new List([this.els[0]], this.selector);
+  return new List([this[0]], this.selector);
 };
 
 /**
@@ -195,19 +212,7 @@ proto.first = function(){
  */
 
 proto.last = function(){
-  return new List([this.els[this.els.length - 1]], this.selector);
-};
-
-/**
- * Return an `Element` at `i`.
- *
- * @param {Number} i
- * @return {Element}
- * @api public
- */
-
-proto.get = function(i){
-  return this.els[i];
+  return new List([this[this.length - 1]], this.selector);
 };
 
 /**
@@ -217,8 +222,8 @@ proto.get = function(i){
  * @api public
  */
 
-proto.length = function(){
-  return this.els.length;
+proto.length = function() {
+  return this.length;
 };
 
 /**
@@ -230,14 +235,14 @@ proto.length = function(){
 
 proto.text = function(val) {
   if (val) {
-    this.els[0].textContent = val;
+    this[0].textContent = val;
     return this;
   }
 
   // TODO: real impl
   var str = '';
-  for (var i = 0; i < this.els.length; ++i) {
-    str += this.els[i].textContent;
+  for (var i = 0; i < this.length; ++i) {
+    str += this[i].textContent;
   }
   return str;
 };
@@ -250,7 +255,7 @@ proto.text = function(val) {
  */
 
 proto.html = function(val){
-  var el = this.els[0];
+  var el = this[0];
   if (!el) {
     return this;
   }
@@ -277,7 +282,7 @@ proto.html = function(val){
 };
 
 proto.hide = function() {
-  this.els.forEach(function(item) {
+  this.forEach(function(item) {
     var save = item.style.display;
     if (save) {
       item.setAttribute('data-olddisplay', save);
@@ -288,7 +293,7 @@ proto.hide = function() {
 };
 
 proto.show = function() {
-  this.els.forEach(function(item) {
+  this.forEach(function(item) {
     var old = item.getAttribute('data-olddisplay');
     item.removeAttribute('data-olddisplay');
     if (!old || old === 'none') {
@@ -314,7 +319,7 @@ proto.show = function() {
 proto.on = function(name, selector, fn, capture) {
   if ('string' == typeof selector) {
 
-    var el = this.els[0];
+    var el = this[0];
     var deleg = function(e) {
       var target = e.target;
       do {
@@ -344,9 +349,9 @@ proto.on = function(name, selector, fn, capture) {
       name = 'mouseover';
     }
 
-    for (var i = 0; i < this.els.length; ++i) {
+    for (var i = 0; i < this.length; ++i) {
       fn._delegate = deleg;
-      event.bind(this.els[i], name, deleg, capture);
+      event.bind(this[i], name, deleg, capture);
     }
     return this;
   }
@@ -356,8 +361,8 @@ proto.on = function(name, selector, fn, capture) {
   capture = fn;
   fn = selector;
 
-  for (var i = 0; i < this.els.length; ++i) {
-    event.bind(this.els[i], name, fn, capture);
+  for (var i = 0; i < this.length; ++i) {
+    event.bind(this[i], name, fn, capture);
   }
 
   return this;
@@ -378,9 +383,9 @@ proto.on = function(name, selector, fn, capture) {
 
 proto.off = function(name, selector, fn, capture){
   if ('string' == typeof selector) {
-    for (var i = 0; i < this.els.length; ++i) {
+    for (var i = 0; i < this.length; ++i) {
       // TODO: add selector support back
-      delegate.unbind(this.els[i], name, fn._delegate, capture);
+      delegate.unbind(this[i], name, fn._delegate, capture);
     }
     return this;
   }
@@ -388,8 +393,8 @@ proto.off = function(name, selector, fn, capture){
   capture = fn;
   fn = selector;
 
-  for (var i = 0; i < this.els.length; ++i) {
-    event.unbind(this.els[i], name, fn, capture);
+  for (var i = 0; i < this.length; ++i) {
+    event.unbind(this[i], name, fn, capture);
   }
   return this;
 };
@@ -402,9 +407,9 @@ proto.off = function(name, selector, fn, capture){
  * @api public
  */
 
-proto.each = function(fn){
-  for (var i = 0; i < this.els.length; ++i) {
-    fn(new List([this.els[i]], this.selector), i);
+proto.each = function(fn) {
+  for (var i = 0; i < this.length; ++i) {
+    fn(new List([this[i]], this.selector), i);
   }
   return this;
 };
@@ -417,10 +422,8 @@ proto.each = function(fn){
  * @api public
  */
 
-proto.forEach = function(fn){
-  for (var i = 0; i < this.els.length; ++i) {
-    fn(this.els[i], i);
-  }
+proto.forEach = function(fn) {
+  Array.prototype.forEach.call(this, fn);
   return this;
 };
 
@@ -433,16 +436,12 @@ proto.forEach = function(fn){
  */
 
 proto.map = function(fn){
-  var arr = [];
-  for (var i = 0; i < this.els.length; ++i) {
-    arr.push(fn(new List([this.els[i]], this.selector), i));
-  }
-  return arr;
+  return Array.prototype.map.call(this, fn);
 };
 
 proto.select = function() {
-  for (var i=0; i<this.els.length ; ++i) {
-    var el = this.els[i];
+  for (var i=0; i<this.length ; ++i) {
+    var el = this[i];
     el.select();
   };
 
@@ -458,18 +457,15 @@ proto.select = function() {
  * @api public
  */
 
-proto.filter = function(fn){
-  var el;
-  var list = new List([], this.selector);
-  for (var i = 0; i < this.els.length; ++i) {
-    el = this.els[i];
-    if (fn(new List([el], this.selector), i)) list.els.push(el);
-  }
-  return list;
+proto.filter = function(fn) {
+  var els = Array.prototype.filter.call(this, function(el) {
+    return fn(new List([el], this.selector));
+  });
+  return new List(els, this.selector);
 };
 
 proto.value = function(val) {
-  var el = this.els[0];
+  var el = this[0];
   if (val) {
     el.value = val;
     return this
@@ -479,7 +475,7 @@ proto.value = function(val) {
 };
 
 proto.offset = function() {
-  var el = this.els[0];
+  var el = this[0];
   var curleft = 0;
   var curtop = 0;
 
@@ -497,7 +493,7 @@ proto.offset = function() {
 };
 
 proto.position = function() {
-  var el = this.els[0];
+  var el = this[0];
   return {
     top: el.offsetTop,
     left: el.offsetLeft
@@ -506,18 +502,18 @@ proto.position = function() {
 
 /// includes border
 proto.outerHeight = function() {
-  return this.els[0].offsetHeight;
+  return this[0].offsetHeight;
 };
 
 /// no border, includes padding
 proto.innerHeight = function() {
-  return this.els[0].clientHeight;
+  return this[0].clientHeight;
 };
 
 /// no border, no padding
 /// this is slower than the others because it must get computed style values
 proto.contentHeight = function() {
-  var style = window.getComputedStyle(this.els[0], null);
+  var style = window.getComputedStyle(this[0], null);
   var ptop = style.getPropertyValue('padding-top').replace('px', '') - 0;
   var pbot = style.getPropertyValue('padding-bottom').replace('px', '') - 0;
 
@@ -525,23 +521,23 @@ proto.contentHeight = function() {
 };
 
 proto.scrollHeight = function() {
-  return this.els[0].scrollHeight;
+  return this[0].scrollHeight;
 };
 
 /// includes border
 proto.outerWidth = function() {
-  return this.els[0].offsetWidth;
+  return this[0].offsetWidth;
 };
 
 /// no border, includes padding
 proto.innerWidth = function() {
-  return this.els[0].clientWidth;
+  return this[0].clientWidth;
 };
 
 /// no border, no padding
 /// this is slower than the others because it must get computed style values
 proto.contentWidth = function() {
-  var style = window.getComputedStyle(this.els[0], null);
+  var style = window.getComputedStyle(this[0], null);
   var pleft = style.getPropertyValue('padding-left').replace('px', '') - 0;
   var pright = style.getPropertyValue('padding-right').replace('px', '') - 0;
 
@@ -550,7 +546,7 @@ proto.contentWidth = function() {
 };
 
 proto.scrollWidth = function() {
-  return this.els[0].scrollWidth;
+  return this[0].scrollWidth;
 };
 
 /**
@@ -563,8 +559,8 @@ proto.scrollWidth = function() {
 
 proto.addClass = function(name){
   var el;
-  for (var i = 0; i < this.els.length; ++i) {
-    el = this.els[i];
+  for (var i = 0; i < this.length; ++i) {
+    el = this[i];
     el._classes = el._classes || classes(el);
     el._classes.add(name);
   }
@@ -581,8 +577,8 @@ proto.addClass = function(name){
 
 proto.removeClass = function(name){
   var el;
-  for (var i = 0; i < this.els.length; ++i) {
-    el = this.els[i];
+  for (var i = 0; i < this.length; ++i) {
+    el = this[i];
     el._classes = el._classes || classes(el);
     el._classes.remove(name);
   }
@@ -599,8 +595,8 @@ proto.removeClass = function(name){
 
 proto.toggleClass = function(name){
   var el;
-  for (var i = 0; i < this.els.length; ++i) {
-    el = this.els[i];
+  for (var i = 0; i < this.length; ++i) {
+    el = this[i];
     el._classes = el._classes || classes(el);
     el._classes.toggle(name);
   }
@@ -617,8 +613,8 @@ proto.toggleClass = function(name){
 
 proto.hasClass = function(name){
   var el;
-  for (var i = 0; i < this.els.length; ++i) {
-    el = this.els[i];
+  for (var i = 0; i < this.length; ++i) {
+    el = this[i];
     el._classes = el._classes || classes(el);
     if (el._classes.has(name)) return true;
   }
@@ -639,7 +635,9 @@ proto.css = function(prop, val){
     return this.setStyle(prop)
   }
 
-  if (2 == arguments.length) return this.setStyle(prop, val);
+  if (2 == arguments.length) {
+    return this.setStyle(prop, val);
+  }
   return this.getStyle(prop);
 };
 
@@ -653,14 +651,14 @@ proto.css = function(prop, val){
  */
 
 proto.setStyle = function(prop, val){
-  for (var i = 0; i < this.els.length; ++i) {
+  for (var i = 0; i < this.length; ++i) {
     if (prop instanceof Object) {
       for(var p in prop) {
-        this.els[i].style[p] = prop[p]
+        this[i].style[p] = prop[p]
       }
     }
     else {
-      this.els[i].style[prop] = val;
+      this[i].style[prop] = val;
     }
   }
   return this;
@@ -674,8 +672,8 @@ proto.setStyle = function(prop, val){
  * @api private
  */
 
-proto.getStyle = function(prop){
-  var el = this.els[0];
+proto.getStyle = function(prop) {
+  var el = this[0];
   if (el) return el.style[prop];
 };
 
@@ -687,25 +685,14 @@ proto.getStyle = function(prop){
  * @api public
  */
 
-proto.find = function(selector){
-  // TODO: real implementation
-  var list = new List([], this.selector);
-  var el, els;
-  for (var i = 0; i < this.els.length; ++i) {
-    el = this.els[i];
-    els = el.querySelectorAll(selector);
-    for (var j = 0; j < els.length; ++j) {
-      list.els.push(els[j]);
-    }
-  }
-  return list;
+proto.find = function(selector) {
+  return dom(selector, this);
 };
 
 proto.next = function() {
-
   var els = [];
-  for (var i=0 ; i<this.els.length ; ++i) {
-    var next = this.els[i].nextElementSibling;
+  for (var i=0 ; i<this.length ; ++i) {
+    var next = this[i].nextElementSibling;
     // if no more siblings then don't push
     if (next) {
       els.push(next);
@@ -716,20 +703,19 @@ proto.next = function() {
 };
 
 proto.prev = function() {
-
   var els = [];
-  for (var i=0 ; i<this.els.length ; ++i) {
-    var next = this.els[i].previousElementSibling;
+  for (var i=0 ; i<this.length ; ++i) {
+    var next = this[i].previousElementSibling;
     // if no more siblings then don't push
     if (next) {
       els.push(next);
     }
   }
-
   return new List(els);
 };
 
 proto.emit = function(name, opt) {
-  event.emit(this.els[0], name, opt);
+  event.emit(this[0], name, opt);
+  return this;
 };
 
