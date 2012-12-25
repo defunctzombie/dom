@@ -8,7 +8,7 @@ test('.next()', function() {
     assert.equal(d.find('li').first().next().text(), 'bar');
 
     // when no more elements, should return list with length 0
-    assert.equal(d.find('li').last().next().length(), 0);
+    assert.equal(d.find('li').last().next().length, 0);
 });
 
 test('.prev()', function() {
@@ -18,5 +18,5 @@ test('.prev()', function() {
     assert.equal(d.find('li').last().prev().text(), 'foo');
 
     // when no more elements, should return list with length 0
-    assert.equal(d.find('li').first().prev().length(), 0);
+    assert.equal(d.find('li').first().prev().length, 0);
 });

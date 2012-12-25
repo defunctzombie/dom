@@ -7,22 +7,37 @@ suite('dom()');
 test('selector', function() {
     var list = dom('<ul><li id="one">foo</li><li id="two">bar</li></ul>');
     list = dom('#two', list);
-    assert(1 == list.length());
-    assert('bar' == list.get(0).textContent);
+    assert(1 == list.length);
+    assert('bar' == list[0].textContent);
 });
 
 test('trim selector', function() {
     var list = dom('  <ul><li id="one"> foo </li></ul>  ');
-    assert(1 == list.length());
+    assert(1 == list.length);
 
     var li = list.find('  #one ');
-    assert(1 == li.length());
+    assert(1 == li.length);
     assert(' foo ' == li.text());
 });
 
 test('html', function() {
     var list = dom('<em>Hello</em>');
-    assert('Hello' == list.get(0).textContent);
+    assert('Hello' == list[0].textContent);
+});
+
+test('multiple html', function() {
+    var list = dom('<em>Hello</em><em>World</em>');
+    assert.equal(2, list.length);
+    assert('Hello' == list[0].textContent);
+    assert('World' == list[1].textContent);
+});
+
+/// create a td element
+/// tested to make sure an element is created wrapped if needed
+test('html - td', function() {
+    var list = dom('<td>');
+    assert.equal(list.length, 1);
+    assert.equal(list[0].outerHTML, '<td></td>');
 });
 
 test('self ref', function() {
@@ -33,12 +48,12 @@ test('self ref', function() {
 test('wrap dom node', function() {
     var p = document.createElement('p');
     var list = dom(p);
-    assert(p == list.get(0));
+    assert(p == list[0]);
 })
 
-test('.length()', function() {
+test('.length', function() {
     var list = dom('<em>Hello</em>');
-    assert(1 == list.length());
+    assert(1 == list.length);
 });
 
 test('.clone()', function() {
@@ -46,17 +61,17 @@ test('.clone()', function() {
     var b = a.clone();
     assert(a != b);
     assert('Hello' == b.text());
-    assert(a.get(0) != b.get(0));
+    assert(a[0] != b[0]);
 });
 
-test('.get()', function() {
+test('[N]', function() {
     var list = dom('<em>Hello</em>');
-    assert('Hello' == list.get(0).textContent);
+    assert('Hello' == list[0].textContent);
 });
 
 test('.at()', function() {
     var list = dom('<em>Hello</em>');
-    assert('Hello' == list.at(0).get(0).textContent);
+    assert('Hello' == list.at(0)[0].textContent);
 });
 
 test('.first()', function() {
@@ -72,7 +87,7 @@ test('.last()', function() {
 test('.find(selector)', function() {
     var list = dom('<ul><li>foo</li><li>bar</li></ul>');
     list = list.find('li');
-    assert(2 == list.length());
+    assert(2 == list.length);
 });
 
 test('.each(fn)', function() {
@@ -89,8 +104,8 @@ test('.each(fn)', function() {
     assert(0 == indexes[0]);
     assert(1 == indexes[1]);
     assert(values[0] instanceof dom.List, 'values should be dom lists');
-    assert(list.get(0) == values[0].get(0));
-    assert(list.get(1) == values[1].get(0));
+    assert(list[0] == values[0][0]);
+    assert(list[1] == values[1][0]);
 });
 
 test('.forEach(fn)', function() {
@@ -107,15 +122,15 @@ test('.forEach(fn)', function() {
     assert(0 == indexes[0]);
     assert(1 == indexes[1]);
     assert(!(values[0] instanceof dom.List), 'values should be elements');
-    assert(list.get(0) == values[0]);
-    assert(list.get(1) == values[1]);
+    assert(list[0] == values[0]);
+    assert(list[1] == values[1]);
 });
 
 test('.map(fn)', function() {
     var list = dom('<ul><li>foo</li><li>bar</li></ul>').find('li');
 
     var ret = list.map(function(el, i){
-        return el.text();
+        return dom(el).text();
     }).join('|');
 
     assert('foo|bar' == ret);
@@ -128,14 +143,14 @@ test('.filter(fn)', function() {
         return el.text() == 'bar';
     });
 
-    assert(1 == selected.length(), 'invalid length');
-    assert(selected.get(0) == list.get(1));
+    assert(1 == selected.length, 'invalid length');
+    assert(selected[0] == list[1]);
 });
 
 test('.attr(key, value)', function() {
     var list = dom('<a></a>');
     list.attr('href', '#');
-    assert('#' == list.get(0).getAttribute('href'));
+    assert('#' == list[0].getAttribute('href'));
 });
 
 test('.attr(key)', function() {

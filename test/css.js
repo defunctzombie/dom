@@ -6,23 +6,23 @@ suite('css');
 test('.addClass()', function() {
     var list = dom('<em>Hello</em>');
     list.addClass('foo').addClass('bar');
-    assert('foo bar' == list.get(0).className);
+    assert('foo bar' == list[0].className);
 });
 
 test('.removeClass()', function() {
     var list = dom('<em>Hello</em>');
     list.addClass('foo').addClass('bar').removeClass('foo');
-    assert('bar' == list.get(0).className);
+    assert('bar' == list[0].className);
 });
 
 test('.toggleClass()', function() {
     var list = dom('<em>Hello</em>');
 
     list.toggleClass('show');
-    assert('show' == list.get(0).className);
+    assert('show' == list[0].className);
 
     list.toggleClass('show');
-    assert('' == list.get(0).className);
+    assert('' == list[0].className);
 });
 
 test('.hasClass()', function() {
@@ -36,7 +36,7 @@ test('.hasClass()', function() {
 test('.css(key, value)', function() {
     var list = dom('<em>Hello</em>');
     list.css('display', 'none');
-    assert('none' == list.get(0).style.display);
+    assert('none' == list[0].style.display);
 });
 
 test('.css(key)', function() {
@@ -51,27 +51,27 @@ test('.css(obj)', function() {
         'display': 'none',
         'position': 'absolute'
     });
-    assert('none' == list.get(0).style.display);
-    assert('absolute' == list.get(0).style.position);
+    assert('none' == list[0].style.display);
+    assert('absolute' == list[0].style.position);
 });
 
 test('.hide()', function() {
     var div = dom('<div></div>');
     div.hide();
-    assert('none' == div.get(0).style.display);
+    assert('none' == div[0].style.display);
 });
 
 test('.show()', function() {
     var div = dom('<div style="display:none"></div>');
     div.show();
-    assert('block' == div.get(0).style.display);
+    assert('block' == div[0].style.display);
 });
 
 test('.show() - preserve previous', function() {
     var div = dom('<div style="display:table"></div>');
     div.hide();
-    assert('none' == div.get(0).style.display);
+    assert('none' == div[0].style.display);
     div.show();
-    assert('table' == div.get(0).style.display);
+    assert('table' == div[0].style.display);
 });
 

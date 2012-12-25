@@ -7,7 +7,7 @@ test('.on(name)', function(done) {
     var div = dom('<div></div>');
 
     div.on('click', function(ev) {
-        assert(ev.target == div.els[0]);
+        assert(ev.target == div[0]);
         done();
     });
 
@@ -38,9 +38,9 @@ test('.on(name, selector)', function(done) {
 
     div.on('click', 'li', function(ev) {
         // the target is the 'a' that caused trigger
-        assert(ev.target == div.find('li a').els[0]);
+        assert(ev.target == div.find('li a')[0]);
         // the currentTarget is the selector element
-        assert(ev.currentTarget == div.find('li').first().els[0]);
+        assert(ev.currentTarget == div.find('li').first()[0]);
         done();
     });
 
