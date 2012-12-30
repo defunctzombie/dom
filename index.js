@@ -33,9 +33,9 @@ function dom(selector, context) {
 
   var ctx = context;
 
-  // if no context, then use first child
+  // if no context, then use document
   if (!ctx) {
-    ctx = document.firstChild;
+    ctx = document;
   }
   // if context is another list, use the first element
   else if (ctx instanceof List) {
@@ -111,12 +111,12 @@ var proto = List.prototype;
  */
 
 proto.attr = function(name, val) {
-  if (2 == arguments.length) {
-    this[0].setAttribute(name, val);
-    return this;
-  } else {
+  if (val === undefined) {
     return this[0].getAttribute(name);
   }
+
+  this[0].setAttribute(name, val);
+  return this;
 };
 
 proto.removeAttr = function(name) {
@@ -256,29 +256,35 @@ proto.text = function(val) {
 
 proto.html = function(val){
   var el = this[0];
-  if (!el) {
-    return this;
-  }
 
   if (val) {
     var str = val;
     if (val instanceof List) {
       str = '';
       val.forEach(function(item) {
-        str += item.html();
+        str += item.outerHtml();
       });
     }
     else if (val instanceof Array) {
       str = '';
       val.forEach(function(item) {
-        str += item.els[0].outerHTML;
+        str += dom(item).outerHtml();
       });
     }
+
     el.innerHTML = str;
     return this;
   }
 
   return el.innerHTML;
+};
+
+proto.outerHtml = function() {
+  var str = '';
+  for (var i=0; i<this.length ; ++i) {
+    str += this[i].outerHTML;
+  }
+  return str;
 };
 
 proto.hide = function() {
@@ -717,5 +723,10 @@ proto.prev = function() {
 proto.emit = function(name, opt) {
   event.emit(this[0], name, opt);
   return this;
+};
+
+/// set or get the data attribute for the first element in the list
+proto.data = function(key, value) {
+  return this.attr('data-' + key, value);
 };
 

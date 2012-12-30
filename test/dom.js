@@ -158,3 +158,5 @@ test('.attr(key)', function() {
     assert('logo' == list.attr('id'));
 });
 
+
+// setting html by: string, array of string? array of List
