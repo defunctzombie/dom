@@ -689,6 +689,15 @@ proto.emit = function(name, opt) {
   return this;
 };
 
+proto.parent = function() {
+  var els = [];
+  for (var i=0 ; i<this.length ; ++i) {
+    els.push(this[i].parentNode);
+  }
+
+  return new List(els);
+};
+
 /// mutation
 
 proto.prepend = function(what) {
@@ -728,6 +737,14 @@ proto.remove = function() {
 proto.replace = function(what) {
   for (var i=0 ; i<this.length ; ++i) {
     mutation.replace(this[i], dom(what));
+  }
+  return this;
+};
+
+// note, we don't do .find('*').remove() here for efficiency
+proto.empty = function() {
+  for (var i=0 ; i<this.length ; ++i) {
+    mutation.empty(this[i]);
   }
   return this;
 };

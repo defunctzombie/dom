@@ -57,7 +57,7 @@ suite('.remove');
 test('remove', function() {
     var list = dom('<div><p>foo</p></div>');
     list.find('p').remove();
-    assert.equal('', list.html());
+    assert.equal('<div></div>', list.outerHtml());
 });
 
 suite('.replace');
@@ -75,5 +75,16 @@ test('replace save', function() {
 
     var old_p = p.replace('<p>bar</p>');
     assert.equal(p[0], old_p[0]);
+});
+
+suite('.empty');
+
+test('empty', function() {
+    var div = dom('<div><p>foo</p></div>');
+    var p = div.find('p');
+
+    assert.equal('<p>foo</p>', div.html());
+    div.empty();
+    assert.equal('', div.html());
 });
 
