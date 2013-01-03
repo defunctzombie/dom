@@ -62,9 +62,9 @@ test('.hide()', function() {
 });
 
 test('.show()', function() {
-    var div = dom('<div style="display:none"></div>');
+    var div = dom('<div style="display:none">f</div>');
     div.show();
-    assert('block' == div[0].style.display);
+    assert.equal('', div[0].style.display);
 });
 
 test('.show() - preserve previous', function() {

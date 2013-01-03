@@ -3,6 +3,7 @@ var domify = require('./lib/domify');
 var classes = require('./lib/classes');
 var matches = require('./lib/matches');
 var event = require('./lib/event');
+var mutation = require('./lib/mutation');
 
 /**
  * Expose `dom()`.
@@ -124,6 +125,11 @@ proto.removeAttr = function(name) {
   return this;
 };
 
+// set or get the data attribute for the first element in the list
+proto.data = function(key, value) {
+  return this.attr('data-' + key, value);
+};
+
 /**
  * Return a cloned `List` with all elements cloned.
  *
@@ -137,46 +143,6 @@ proto.clone = function(){
     arr.push(this[i].cloneNode(true));
   }
   return new List(arr);
-};
-
-/**
- * Prepend `val`.
- *
- * @param {String|Element|List} val
- * @return {List} self
- * @api public
- */
-
-proto.prepend = function(val){
-  var el = this[0];
-  if (!el) return this;
-  val = dom(val);
-  for (var i = 0; i < val.length; ++i) {
-    if (el.children.length) {
-      el.insertBefore(val[i], el.firstChild);
-    } else {
-      el.appendChild(val[i]);
-    }
-  }
-  return this;
-};
-
-/**
- * Append `val`.
- *
- * @param {String|Element|List} val
- * @return {List} self
- * @api public
- */
-
-proto.append = function(val){
-  var el = this[0];
-  if (!el) return this;
-  val = dom(val);
-  for (var i = 0; i < val.length; ++i) {
-    el.appendChild(val[i]);
-  }
-  return this;
 };
 
 /**
@@ -302,9 +268,12 @@ proto.show = function() {
   this.forEach(function(item) {
     var old = item.getAttribute('data-olddisplay');
     item.removeAttribute('data-olddisplay');
+
+    // use default display for element
     if (!old || old === 'none') {
-      old = 'block';
+      old = '';
     }
+
     item.style.display = old;
   });
   return this;
@@ -548,7 +517,6 @@ proto.contentWidth = function() {
   var pright = style.getPropertyValue('padding-right').replace('px', '') - 0;
 
   return this.innerWidth() - pleft - pright;
-
 };
 
 proto.scrollWidth = function() {
@@ -638,12 +606,15 @@ proto.hasClass = function(name){
 
 proto.css = function(prop, val){
   if (prop instanceof Object) {
-    return this.setStyle(prop)
+    for(var p in prop) {
+      this.setStyle(p, prop[p]);
+    }
   }
 
   if (2 == arguments.length) {
     return this.setStyle(prop, val);
   }
+
   return this.getStyle(prop);
 };
 
@@ -658,14 +629,7 @@ proto.css = function(prop, val){
 
 proto.setStyle = function(prop, val){
   for (var i = 0; i < this.length; ++i) {
-    if (prop instanceof Object) {
-      for(var p in prop) {
-        this[i].style[p] = prop[p]
-      }
-    }
-    else {
-      this[i].style[prop] = val;
-    }
+    this[i].style[prop] = val;
   }
   return this;
 };
@@ -725,8 +689,46 @@ proto.emit = function(name, opt) {
   return this;
 };
 
-/// set or get the data attribute for the first element in the list
-proto.data = function(key, value) {
-  return this.attr('data-' + key, value);
+/// mutation
+
+proto.prepend = function(what) {
+  for (var i=0 ; i<this.length ; ++i) {
+    mutation.prepend(this[i], dom(what));
+  }
+  return this;
+};
+
+proto.append = function(what) {
+  for (var i=0 ; i<this.length ; ++i) {
+    mutation.append(this[i], dom(what));
+  }
+  return this;
+};
+
+proto.before = function(what) {
+  for (var i=0 ; i<this.length ; ++i) {
+    mutation.before(this[i], dom(what));
+  }
+  return this;
+};
+
+proto.after = function(what) {
+  for (var i=0 ; i<this.length ; ++i) {
+    mutation.after(this[i], dom(what));
+  }
+  return this;
+};
+
+proto.remove = function() {
+  for (var i=0 ; i<this.length ; ++i) {
+    mutation.remove(this[i]);
+  }
+};
+
+proto.replace = function(what) {
+  for (var i=0 ; i<this.length ; ++i) {
+    mutation.replace(this[i], dom(what));
+  }
+  return this;
 };
 
