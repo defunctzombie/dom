@@ -57,7 +57,7 @@ suite('.remove');
 test('remove', function() {
     var list = dom('<div><p>foo</p></div>');
     list.find('p').remove();
-    assert.equal('<div></div>', list.outerHtml());
+    assert.equal('', list.html());
 });
 
 suite('.replace');

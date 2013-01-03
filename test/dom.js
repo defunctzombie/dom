@@ -37,7 +37,7 @@ test('multiple html', function() {
 test('html - td', function() {
     var list = dom('<td>');
     assert.equal(list.length, 1);
-    assert.equal(list[0].outerHTML, '<td></td>');
+    assert.equal(list[0].tagName.toLowerCase(), 'td');
 });
 
 test('self ref', function() {

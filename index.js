@@ -224,33 +224,11 @@ proto.html = function(val){
   var el = this[0];
 
   if (val) {
-    var str = val;
-    if (val instanceof List) {
-      str = '';
-      val.forEach(function(item) {
-        str += item.outerHtml();
-      });
-    }
-    else if (val instanceof Array) {
-      str = '';
-      val.forEach(function(item) {
-        str += dom(item).outerHtml();
-      });
-    }
-
     el.innerHTML = str;
     return this;
   }
 
   return el.innerHTML;
-};
-
-proto.outerHtml = function() {
-  var str = '';
-  for (var i=0; i<this.length ; ++i) {
-    str += this[i].outerHTML;
-  }
-  return str;
 };
 
 proto.hide = function() {
