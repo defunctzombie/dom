@@ -23,9 +23,9 @@
     "scripts": "compat.js",
     "files": "test/*.js",
     "browsers": {
-      "ie": [ 8, 9 ],
-      "firefox": [ 15 ],
-      "chrome": [ 22 ],
+      "ie": [ 8, 9, 10 ],
+      "firefox": [ 15, 16, 17 ],
+      "chrome": [ 22, 23 ],
       "safari": [ 5.1 ]
     },
     "harness": "mocha-qunit"
