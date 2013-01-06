@@ -7,8 +7,8 @@ suite('dom()');
 test('selector', function() {
     var list = dom('<ul><li id="one">foo</li><li id="two">bar</li></ul>');
     list = dom('#two', list);
-    assert(1 == list.length);
-    assert('bar' == list[0].textContent);
+    assert.equal(1, list.length);
+    assert.equal('bar', list[0].textContent);
 });
 
 test('trim selector', function() {
