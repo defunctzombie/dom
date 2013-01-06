@@ -11,7 +11,7 @@
     "url": "git://github.com/component/dom.git"
   },
   "scripts": {
-    "test": "make test"
+    "test": "zuul test/*.js --ui qunit"
   },
   "devDependencies": {
     "mocha": "~1.7.0"
