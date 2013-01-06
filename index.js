@@ -224,7 +224,11 @@ proto.html = function(val){
   var el = this[0];
 
   if (val) {
-    el.innerHTML = str;
+    if (typeof(val) !== 'string') {
+      throw new Error('.html() requires a string');
+    }
+
+    el.innerHTML = val;
     return this;
   }
 

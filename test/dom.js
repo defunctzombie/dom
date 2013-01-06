@@ -20,11 +20,13 @@ test('trim selector', function() {
     assert(' foo ' == li.text());
 });
 
+// create from html
 test('html', function() {
     var list = dom('<em>Hello</em>');
     assert('Hello' == list[0].textContent);
 });
 
+// create multiple html elements
 test('multiple html', function() {
     var list = dom('<em>Hello</em><em>World</em>');
     assert.equal(2, list.length);
@@ -159,4 +161,3 @@ test('.attr(key)', function() {
 });
 
 
-// setting html by: string, array of string? array of List
