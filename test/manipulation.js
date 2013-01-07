@@ -80,10 +80,10 @@ test('replace save', function() {
 suite('.empty');
 
 test('empty', function() {
-    var div = dom('<div><p>foo</p></div>');
+    var div = dom('<div><p>foo</p><p>bar</p></div>');
     var p = div.find('p');
 
-    assert.equal('<p>foo</p>', div.html());
+    assert.equal('<p>foo</p><p>bar</p>', div.html());
     div.empty();
     assert.equal('', div.html());
 });
