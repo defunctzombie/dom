@@ -21,23 +21,11 @@
   "readmeFilename": "Readme.md",
   "testling": {
     "files": "test/*.js",
-    "browsers": {
-      "ie": [
-        9,
-        10
-      ],
-      "firefox": [
-        15,
-        16,
-        17
-      ],
-      "chrome": [
-        22,
-        23
-      ],
-      "safari": [
-        5.1
-      ]
+    "browsers": [
+      "ie/9..latest",
+      "firefox/3.6..latest",
+      "chrome/4.0..latest",
+      "safari/5.1..latest"
     },
     "harness": "mocha-qunit"
   }
