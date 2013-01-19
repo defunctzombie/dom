@@ -28,7 +28,7 @@ function dom(selector, context) {
   }
 
   // array
-  if (Array.isArray(selector)) {
+  if (selector instanceof Array) {
     return new List(selector);
   }
 
@@ -233,32 +233,6 @@ proto.html = function(val){
   }
 
   return el.innerHTML;
-};
-
-proto.hide = function() {
-  this.forEach(function(item) {
-    var save = item.style.display;
-    if (save) {
-      item.setAttribute('data-olddisplay', save);
-    }
-    item.style.display = 'none';
-  });
-  return this;
-};
-
-proto.show = function() {
-  this.forEach(function(item) {
-    var old = item.getAttribute('data-olddisplay');
-    item.removeAttribute('data-olddisplay');
-
-    // use default display for element
-    if (!old || old === 'none') {
-      old = '';
-    }
-
-    item.style.display = old;
-  });
-  return this;
 };
 
 /**

@@ -55,23 +55,3 @@ test('.css(obj)', function() {
     assert('absolute' == list[0].style.position);
 });
 
-test('.hide()', function() {
-    var div = dom('<div></div>');
-    div.hide();
-    assert('none' == div[0].style.display);
-});
-
-test('.show()', function() {
-    var div = dom('<div style="display:none">f</div>');
-    div.show();
-    assert.equal('', div[0].style.display);
-});
-
-test('.show() - preserve previous', function() {
-    var div = dom('<div style="display:table"></div>');
-    div.hide();
-    assert('none' == div[0].style.display);
-    div.show();
-    assert('table' == div[0].style.display);
-});
-
