@@ -200,12 +200,11 @@ proto.length = function() {
  */
 
 proto.text = function(val) {
-  if (val) {
+  if (val !== undefined) {
     this[0].textContent = val;
     return this;
   }
 
-  // TODO: real impl
   var str = '';
   for (var i = 0; i < this.length; ++i) {
     str += this[i].textContent;
