@@ -38,9 +38,18 @@ function dom(selector, context) {
   if (!ctx) {
     ctx = document;
   }
+
   // if context is another list, use the first element
   else if (ctx instanceof List) {
     ctx = context[0];
+  }
+
+  // if context is a string, select first element of retuned dom list
+  else if (typeof ctx === "string") {
+    ctx = dom(ctx)[0];
+
+    // if dom returns an
+    if (ctx === undefined) ctx = document;
   }
 
   // flatten out a nodelist into regular array
